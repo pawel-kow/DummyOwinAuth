@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
+using org.id4me;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,13 @@ namespace DummyOwinAuth
 
                     var stateString = Options.StateDataFormat.Protect(state);
 
-                    Response.Redirect(WebUtilities.AddQueryString(Options.CallbackPath.Value, "state", stateString));
+                    var id = challenge.Properties.Dictionary["user_id"];
+
+                    var ctx = Options.client.get_rp_context(id);
+                    var url = Options.client.get_consent_url(
+                        context: ctx, prompt: OIDCLoginPrompt.login, useNonce: true, state: stateString);
+
+                    Response.Redirect(url);
                 }
             }
 
