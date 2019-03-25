@@ -10,12 +10,12 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.DataHandler;
 
-namespace DummyOwinAuth
+namespace Id4meOwinAuth
 {
     // One instance is created when the application starts.
-    public class DummyAuthenticationMiddleware : AuthenticationMiddleware<DummyAuthenticationOptions>
+    public class Id4meAuthenticationMiddleware : AuthenticationMiddleware<Id4meAuthenticationOptions>
     {
-        public DummyAuthenticationMiddleware(OwinMiddleware next, IAppBuilder app, DummyAuthenticationOptions options)
+        public Id4meAuthenticationMiddleware(OwinMiddleware next, IAppBuilder app, Id4meAuthenticationOptions options)
             : base(next, options)
         { 
             if(string.IsNullOrEmpty(Options.SignInAsAuthenticationType))
@@ -24,7 +24,7 @@ namespace DummyOwinAuth
             }
             if(options.StateDataFormat == null)
             {
-                var dataProtector = app.CreateDataProtector(typeof(DummyAuthenticationMiddleware).FullName,
+                var dataProtector = app.CreateDataProtector(typeof(Id4meAuthenticationMiddleware).FullName,
                     options.AuthenticationType);
 
                 options.StateDataFormat = new PropertiesDataFormat(dataProtector);
@@ -32,9 +32,9 @@ namespace DummyOwinAuth
         }
 
         // Called for each request, to create a handler for each request.
-        protected override AuthenticationHandler<DummyAuthenticationOptions> CreateHandler()
+        protected override AuthenticationHandler<Id4meAuthenticationOptions> CreateHandler()
         {
-            return new DummyAuthenticationHandler();
+            return new Id4meAuthenticationHandler();
         }
     }
 }

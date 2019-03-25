@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DummyOwinAuth
+namespace Id4meOwinAuth
 {
     internal static class Constants
     {
-        internal const string DefaultAuthenticationType = "Dummy";
+        internal const string DefaultAuthenticationType = "ID4me";
     }
 }

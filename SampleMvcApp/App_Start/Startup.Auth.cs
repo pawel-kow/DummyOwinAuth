@@ -8,7 +8,7 @@ using Microsoft.Owin.Security.Google;
 using Owin;
 using System;
 using SampleMvcApp.Models;
-using DummyOwinAuth;
+using Id4meOwinAuth;
 
 namespace SampleMvcApp
 {
@@ -57,7 +57,8 @@ namespace SampleMvcApp
             //    ClientSecret = ""
             //});
 
-            app.UseDummyAuthentication(new DummyAuthenticationOptions("John Doe", "42"));
+            //TODO: pass real config of the plugin here
+            app.UseID4meAuthentication(new Id4meAuthenticationOptions());
         }
     }
 }

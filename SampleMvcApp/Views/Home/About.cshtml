@@ -4,4 +4,21 @@
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<p>This is secure area for logged in users</p>
+<div>Logged in as: @User.Identity.Name</div>
+<hr />
+@{
+    var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+
+    if (claimsIdentity != null)
+    {
+        foreach (var cl in claimsIdentity.Claims)
+        {
+            <p>
+                @cl.Type.ToString():
+                @cl.Value.ToString();
+            </p>
+        }
+    }
+}
+@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })

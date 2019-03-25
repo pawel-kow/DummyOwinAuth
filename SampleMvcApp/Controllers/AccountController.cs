@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Owin;
 using SampleMvcApp.Models;
+using System.Web.Helpers;
 
 namespace SampleMvcApp.Controllers
 {
@@ -350,6 +351,17 @@ namespace SampleMvcApp.Controllers
             if (user != null)
             {
                 await SignInAsync(user, isPersistent: false);
+
+                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View("ExternalLoginFailure");
+                }
+
+                bool userUpdated = await populateClaimChanges(user, info);
+                if (userUpdated)
+                    await UserManager.UpdateAsync(user);
+
                 return RedirectToLocal(returnUrl);
             }
             else
@@ -359,6 +371,24 @@ namespace SampleMvcApp.Controllers
                 ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
                 return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
+        }
+
+        private async Task<bool> populateClaimChanges(ApplicationUser user, ExternalLoginInfo info)
+        {
+            var userUpdated = false;
+            foreach (var c in info.ExternalIdentity.Claims)
+            {
+                var existingClaim = user.Claims.FirstOrDefault(x => x.ClaimType.Equals(c.Type));
+                if (existingClaim != null)
+                {
+                    existingClaim.ClaimValue = c.Value;
+                    userUpdated = true;
+                }
+                // don't store anti-frogery claim otherwise there are conflicts between DB and cookie
+                else if (!c.Type.Equals(AntiForgeryConfig.UniqueClaimTypeIdentifier))
+                    await UserManager.AddClaimAsync(user.Id, c);
+            }
+            return userUpdated;
         }
 
         //
@@ -408,21 +438,22 @@ namespace SampleMvcApp.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser() { UserName = info.ExternalIdentity.Name, Email = model.Email };
                 IdentityResult result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
+                        await populateClaimChanges(user, info);                
                         await SignInAsync(user, isPersistent: false);
-                        
+
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                         // SendEmail(user.Email, callbackUrl, "Confirm your account", "Please confirm your account by clicking this link");
-                        
+
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -436,7 +467,6 @@ namespace SampleMvcApp.Controllers
         //
         // POST: /Account/LogOff
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();

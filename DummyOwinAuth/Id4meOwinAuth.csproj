@@ -7,8 +7,8 @@
     <ProjectGuid>{C588F874-AB6D-44FB-8582-8F5903E61C2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DummyOwinAuth</RootNamespace>
-    <AssemblyName>DummyOwinAuth</AssemblyName>
+    <RootNamespace>Id4meOwinAuth</RootNamespace>
+    <AssemblyName>Id4meOwinAuth</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,8 +40,8 @@
     <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -64,10 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="DummyAuthenticationExtensions.cs" />
-    <Compile Include="DummyAuthenticationHandler.cs" />
-    <Compile Include="DummyAuthenticationMiddleware.cs" />
-    <Compile Include="DummyAuthenticationOptions.cs" />
+    <Compile Include="Id4meAuthenticationExtensions.cs" />
+    <Compile Include="Id4meAuthenticationHandler.cs" />
+    <Compile Include="Id4meAuthenticationMiddleware.cs" />
+    <Compile Include="Id4meAuthenticationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +75,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\id4me.net\id4me.jose.jwk\id4me.jose.jwk.csproj">
+      <Project>{19295124-d4f5-45f8-8a45-0b42e22ab5e0}</Project>
+      <Name>id4me.jose.jwk</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\id4me.net\id4me.net\id4me.net.csproj">
       <Project>{7a544874-142f-4360-8f0e-9708b43fcce4}</Project>
       <Name>id4me.net</Name>

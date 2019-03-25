@@ -291,9 +291,9 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DummyOwinAuth\DummyOwinAuth.csproj">
+    <ProjectReference Include="..\DummyOwinAuth\Id4meOwinAuth.csproj">
       <Project>{c588f874-ab6d-44fb-8582-8f5903e61c2c}</Project>
-      <Name>DummyOwinAuth</Name>
+      <Name>Id4meOwinAuth</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
