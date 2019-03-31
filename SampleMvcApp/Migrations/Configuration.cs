@@ -9,7 +9,7 @@ namespace SampleMvcApp.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(SampleMvcApp.Models.ApplicationDbContext context)

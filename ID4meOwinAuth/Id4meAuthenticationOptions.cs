@@ -15,7 +15,7 @@ namespace Id4meOwinAuth
 {
     public class Id4meAuthenticationOptions : AuthenticationOptions
     {
-        internal ID4meClient client;
+        internal Dictionary<string, ID4meClient> clientList = new Dictionary<string, ID4meClient>();
         ID4meRegistratiornsContext registrationsDB;
         private string dbConnectionName;
 
@@ -27,6 +27,44 @@ namespace Id4meOwinAuth
             }
         }
 
+        internal ID4meClient getClient(IOwinRequest request)
+        {
+            return getClient(request.Scheme + Uri.SchemeDelimiter + request.Host + request.PathBase + '/');
+        }
+
+        internal ID4meClient getClient(string baseUrl)
+        {
+            if (clientList.ContainsKey(baseUrl))
+                return clientList[baseUrl];
+            else
+            {
+                var newClient = new ID4meClient(
+                    validate_url: baseUrl + CallbackPath,
+                    client_name: "ASP.NET test with Owin",
+                    find_authority: name =>
+                        RegistrationsDB.Registrations.First(x => x.Autority == name && x.BaseUrl == baseUrl).RegistrationData,
+                    save_authority: (name, registration) =>
+                    {
+                        var reg = RegistrationsDB.Registrations.FirstOrDefault(x => x.Autority == name && x.BaseUrl == baseUrl);
+                        if (reg == null)
+                        {
+                            reg = new Id4meClientRegistrations()
+                            {
+                                Autority = name,
+                                BaseUrl = baseUrl,
+                                RegistrationData = registration
+                            };
+                            RegistrationsDB.Registrations.Add(reg);
+                        }
+                        else
+                            reg.RegistrationData = registration;
+                        RegistrationsDB.SaveChanges();
+                    },
+                    app_type: OIDCApplicationType.native);
+                clientList[baseUrl] = newClient;
+                return newClient;
+            }
+        }
 
         Dictionary<string, string> authorities = new Dictionary<string, string>();
 
@@ -40,31 +78,6 @@ namespace Id4meOwinAuth
             AuthenticationMode = AuthenticationMode.Passive;
             this.dbConnectionName = dbConnectionName;
 
-            client = new ID4meClient(
-                //TODO: this one needs to be adjusted according to local domain
-                // Idea: have a map of client IDs for BaseURL, so that the callbacks may match (may cause trouble with storage of registaration)
-                validate_url: "http://localhost:53076/" + CallbackPath,
-                client_name: "ASP.NET test with Owin",
-                find_authority: name =>
-                    RegistrationsDB.Registrations.First(x => x.Autority == name && x.BaseUrl == "http://localhost:53076/").RegistrationData,
-                save_authority: (name, registration) =>
-                {
-                    var reg = RegistrationsDB.Registrations.FirstOrDefault(x => x.Autority == name && x.BaseUrl == "http://localhost:53076/");
-                    if (reg == null)
-                    {
-                        reg = new Id4meClientRegistrations()
-                        {
-                            Autority = name,
-                            BaseUrl = "http://localhost:53076/",
-                            RegistrationData = registration
-                        };
-                        RegistrationsDB.Registrations.Add(reg);
-                    }
-                    else
-                        reg.RegistrationData = registration;
-                    RegistrationsDB.SaveChanges();
-                },
-                app_type: OIDCApplicationType.native);        
         }
 
         public PathString CallbackPath { get; set; }

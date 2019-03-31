@@ -20,9 +20,11 @@ namespace Id4meOwinAuth
 
             if (!string.IsNullOrEmpty(Request.Query["code"]) && properties.Dictionary.ContainsKey("id4me.ctx"))
             {
+                var client = Options.getClient(Request);
+
                 var ctx = ID4meContext.Deserialize(properties.Dictionary["id4me.ctx"]);
-                var idtoken = Options.client.get_idtoken(ctx, Request.Query["code"]);
-                var user_info = Options.client.get_user_info(ctx);
+                var idtoken = client.get_idtoken(ctx, Request.Query["code"]);
+                var user_info = client.get_user_info(ctx);
                 // ASP.Net Identity requires the NameIdentitifer field to be set or it won't  
                 // accept the external login (AuthenticationManagerExtensions.GetExternalLoginInfo)
                 var identity = new ClaimsIdentity(Options.SignInAsAuthenticationType);
@@ -64,13 +66,13 @@ namespace Id4meOwinAuth
                     }
 
                     var id = challenge.Properties.Dictionary["user_id"];
-                    var ctx = Options.client.get_rp_context(id);
+                    var ctx = Options.getClient(Request).get_rp_context(id);
                     ctx.GenerateNewNonce();
                     state.Dictionary["id4me.ctx"] = ctx.Serialize();
 
                     var stateString = Options.StateDataFormat.Protect(state);
 
-                    var url = Options.client.get_consent_url(
+                    var url = Options.getClient(Request).get_consent_url(
                         context: ctx, useNonce: true, useNonceFromContext: true, state: stateString,
                         claimsrequest: new ID4meClaimsRequest()
                         {
