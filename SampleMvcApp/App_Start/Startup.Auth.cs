@@ -57,8 +57,7 @@ namespace SampleMvcApp
             //    ClientSecret = ""
             //});
 
-            //TODO: pass real config of the plugin here
-            app.UseID4meAuthentication(new Id4meAuthenticationOptions());
+            app.UseID4meAuthentication(new Id4meAuthenticationOptions(dbConnectionName: "DefaultConnection"));
         }
     }
 }

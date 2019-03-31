@@ -65,13 +65,13 @@ namespace Id4meOwinAuth
 
                     var id = challenge.Properties.Dictionary["user_id"];
                     var ctx = Options.client.get_rp_context(id);
+                    ctx.GenerateNewNonce();
                     state.Dictionary["id4me.ctx"] = ctx.Serialize();
 
                     var stateString = Options.StateDataFormat.Protect(state);
 
-                    // TODO: check why nonce is not working (nonce replay)
                     var url = Options.client.get_consent_url(
-                        context: ctx, prompt: OIDCLoginPrompt.login, useNonce: false, state: stateString,
+                        context: ctx, useNonce: true, useNonceFromContext: true, state: stateString,
                         claimsrequest: new ID4meClaimsRequest()
                         {
                             userinfo = new Dictionary<string, OIDCClaimRequestOptions>

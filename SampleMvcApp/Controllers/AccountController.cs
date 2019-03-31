@@ -329,8 +329,6 @@ namespace SampleMvcApp.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-
-            // TODO: if existing, pull ID from the form here this.Request.Form[provider + "-id"]
             var id = this.Request.Form[provider + "-id"];
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), id);
         }
